@@ -5,6 +5,9 @@
     <UserSecretsId>b96108c7-2719-42f3-8c56-17ead5899aa6</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Models\DuelModel.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.12.0" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.CosmosDB" Version="3.0.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" Version="3.1.7" />

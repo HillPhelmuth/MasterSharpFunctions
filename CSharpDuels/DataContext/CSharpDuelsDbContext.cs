@@ -8,7 +8,8 @@ namespace CSharpDuels.DataContext
 {
     public class CSharpDuelsDbContext : DbContext
     {
-        public DbSet<DuelModel> Duels { get; set; }
+        public DbSet<UserDuel> Duels { get; set; }
+        //public DbSet<CompletedDuel> CompletedDuels { get; set; }
         public CSharpDuelsDbContext(DbContextOptions<CSharpDuelsDbContext> options)
             :base(options){}
 

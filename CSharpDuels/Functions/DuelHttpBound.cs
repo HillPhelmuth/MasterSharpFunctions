@@ -1,17 +1,21 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web.Http;
 using CSharpDuels.DataContext;
 using CSharpDuels.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Azure.Documents;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace CSharpDuels.Functions
 {
@@ -24,73 +28,54 @@ namespace CSharpDuels.Functions
             _context = context;
         }
 
-        [FunctionName("DuelEntity")]
+        [FunctionName("AddUpdateDuel")]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = "addUser")] object duelModel,
-            ILogger log)
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = "addUpdate/{userId}")] CompletedDuel completed, string userId, ILogger log)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
+            var userDuel = await _context.Duels.Where(x => x.UserId == userId).FirstOrDefaultAsync();
+            if (userDuel != null)
+            {
+                if (userDuel.CompletedDuelsList != null)
+                {
+                    userDuel.CompletedDuelsList.Add(completed);
+                }
+                else
+                {
+                    userDuel.CompletedDuelsList = new List<CompletedDuel> {completed};
+                }
 
-            var jsonString = duelModel.ToString();
-            var data = DuelModel.FromJson(jsonString); 
-            //if(data.Id == null)
-            //    data.Id = new Guid();
-            await _context.Duels.AddAsync(data);
-            await _context.SaveChangesAsync();
+                _context.Duels.Update(userDuel);
+                await _context.SaveChangesAsync();
+                return new OkResult();
+            }
+            var newUserDuel = new UserDuel()
+            {
+                UserId = userId,
+                CompletedDuelsList = new List<CompletedDuel>{completed}
+            };
             
-            var jsonSettings = new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore };
-            string responseMessage = data.ToJson();
+            
+            await _context.Duels.AddAsync(newUserDuel);
+            await _context.SaveChangesAsync();
+
+            string responseMessage = completed.ToString();
             log.LogInformation(responseMessage);
             return new OkResult();
         }
 
-        [FunctionName("DuelUpdate")]
-        public async Task<IActionResult> Runonce(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = "updateUser")]
-            DuelModel duelModel, ILogger log)
+        [FunctionName("GetDuels")]
+        public async Task<IActionResult> RunGet(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = "Get/{userId}")]
+            object duelModel, string userId, ILogger log)
         {
-            var matchedUser = await _context.Duels.FirstOrDefaultAsync(x => x.UserId == duelModel.UserId);
-            matchedUser.CompletedDuels = new List<CompletedDuel>();
-            foreach (var completedDuel in duelModel.CompletedDuels)
+            var userDuel = await _context.Duels.Where(x => x.UserId == userId).FirstOrDefaultAsync();
+            if (userDuel == null)
             {
-                matchedUser.CompletedDuels.Add(completedDuel);
+                return new BadRequestErrorMessageResult("User does not exist in Duels document");
             }
-
-            _context.Duels.Update(matchedUser);
-            var result = await _context.SaveChangesAsync();
-            
-            return new OkObjectResult(result);
+            return new OkObjectResult(userDuel);
         }
-        //[FunctionName("DuelEntityFirst")]
-        //public async Task<IActionResult> Runonce(
-        //    [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = "First")] HttpRequest req,
-        //    ILogger log)
-        //{
-        //    log.LogInformation("C# HTTP trigger function processed a request.");
-
-
-        //    DuelModel initial = new DuelModel(){UserId = "HillPhel", CompletedDuels = new List<CompletedDuel>()};
-        //    var completed = new CompletedDuel()
-        //    {
-        //        Attempts = 1,
-        //        ChallengeName = "Braces",
-        //        Duel = initial,
-        //        DuelId = "1|GoTime",
-        //        RivalId = "adam@adam",
-        //        Solution = "var x = 1; var y = 2; return x+y;",
-        //        Time = new TimeSpan(0,10,30),
-        //        WonDuel = true
-        //    };
-        //    initial.CompletedDuels.Add(completed);
-
-        //    //log.LogInformation($"The stringified List Property: {initial.DuelsWonAsJson}");
-        //    //await _context.Database.EnsureCreatedAsync();
-        //    await _context.Duels.AddAsync(initial);
-        //    await _context.SaveChangesAsync();
-        //    var jsonSettings = new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore };
-        //    string responseMessage = JsonConvert.SerializeObject(initial, Formatting.Indented, jsonSettings);
-        //    log.LogInformation($"JSON: {initial}");
-        //    return new OkObjectResult(responseMessage);
-        //}
+        
     }
 }

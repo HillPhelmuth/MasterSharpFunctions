@@ -25,54 +25,38 @@ namespace CSharpDuels.Functions
         private static readonly string connectionString = Environment.GetEnvironmentVariable("ConnectionString");
         private static CosmosClient cosmosClient = new CosmosClient(endpoint, authKey);
         private static IDocumentClient docClient = new DocumentClient(new Uri(endpoint), authKey);
-        private const string FunctionBaseUrl = "https://csharprealtimefunction.azurewebsites.net/api";
-
+        private const string FunctionBaseUrl = "https://csharpduelshubfunction.azurewebsites.net/api";
+       
         [FunctionName("DuelCosmosBound")]
         public static async void Run([CosmosDBTrigger(
                 databaseName: "CSharpDuelsDb",
-                collectionName: "UserDuels",
+                collectionName: "DuelsData",
                 ConnectionStringSetting = "ConnectionString",
                 LeaseCollectionName = "leases",
                 CreateLeaseCollectionIfNotExists = true)]
             IReadOnlyList<Document> input, ILogger log)
         {
             var sw = new Stopwatch();
-            
-            if (input != null && input.Count > 0)
-            {
-                sw.Start();
-                string output = "";
-                var queryDefinition = new QueryDefinition("select * From UserDuels");
-                //var feedIterator = cosmosClient.GetDatabaseQueryStreamIterator(queryDefinition);
-                using var feedIterator = cosmosClient.GetDatabaseQueryStreamIterator(
-                    queryDefinition);
-                var sb = new StringBuilder(" ");
-                while (feedIterator.HasMoreResults)
-                {
-                    // Stream iterator returns a response with status for errors
-                    using var response = await feedIterator.ReadNextAsync();
-                    // Handle failure scenario. 
-                    if (!response.IsSuccessStatusCode)
-                    {
-                        
-                        // Log the response.Diagnostics and handle the error
-                    }
-                    var reader = new StreamReader(response.Content);
-                    var outp = await reader.ReadToEndAsync();
-                    sb.Append(outp);
-                }
 
-                output = sb.ToString();
-                sw.Stop();
+            if (input == null || input.Count <= 0) return;
+            sw.Start();
+            var document = input.FirstOrDefault();
+            var userId = document?.GetPropertyValue<string>("userId");
+            var completedDuels = document?.GetPropertyValue<List<CompletedDuel>>("completedDuels");
+            var completedDuel = completedDuels?.OrderByDescending(x => x.TimeCompleted).FirstOrDefault();
+            string output = "";
+            var userWon = completedDuel?.WonDuel ?? false;
+                
+            output = userWon ? $"{userId} Defeated {completedDuel?.RivalId} in challnge {completedDuel?.ChallengeName}!" : $"{completedDuel?.RivalId} Defeated {userId} in challnge {completedDuel?.ChallengeName}!";
+            sw.Stop();
 
-                log.LogInformation("Documents modified " + input.Count);
-                log.LogInformation("First document Id " + input[0].Id);
-                log.LogInformation(output);
-                var client = new HttpClient();
-                var url = $"{FunctionBaseUrl}/messages/AUTOMATED";
-                var message = $"from Cosmos: took {sw.ElapsedMilliseconds}ms User {output} ";
-                await client.PostAsJsonAsync(url, message);
-            }
+            log.LogInformation("Documents modified " + input.Count);
+            log.LogInformation("First document Id " + input[0].Id);
+            log.LogInformation(output);
+            var client = new HttpClient();
+            var url = $"{FunctionBaseUrl}/alerts/CosmosDb";
+            var message = $"{output}";
+            await client.PostAsJsonAsync(url, message);
         }
     }
 }
