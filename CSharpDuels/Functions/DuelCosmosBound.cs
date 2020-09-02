@@ -18,10 +18,10 @@ namespace CSharpDuels.Functions
 {
     public static class DuelCosmosBound
     {
-        private static readonly string _containerId = "collection2";
+        
         private static readonly string authKey = Environment.GetEnvironmentVariable("AuthKey");
         private static readonly string endpoint = Environment.GetEnvironmentVariable("ServiceEndpoint");
-        private static readonly string dbName = Environment.GetEnvironmentVariable("DatabaseName");
+        private static readonly string dbName = Environment.GetEnvironmentVariable("CSharpDuelsDb");
         private static readonly string connectionString = Environment.GetEnvironmentVariable("ConnectionString");
         private static CosmosClient cosmosClient = new CosmosClient(endpoint, authKey);
         private static IDocumentClient docClient = new DocumentClient(new Uri(endpoint), authKey);

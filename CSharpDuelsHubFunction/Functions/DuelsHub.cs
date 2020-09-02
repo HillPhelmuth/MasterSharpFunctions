@@ -58,7 +58,7 @@ namespace CSharpDuelsHubFunction.Functions
                 new SignalRMessage
                 {
                     GroupName = group,
-                    Target = "getAlert",
+                    Target = "resultAlert",
                     Arguments = new object[] { messageString }
                 });
         }
