@@ -64,10 +64,10 @@ namespace CSharpDuelsHubFunction.Functions
         }
         [FunctionName("create")]
         public static Task SendNewArena(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "create/{group}/{user}")] object message, string user, string group, [SignalR(HubName = "duels")] IAsyncCollector<SignalRMessage> signalRMessages)
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "create/{group}/{user}/{challenge}")] object message, string user, string group, string challenge, [SignalR(HubName = "duels")] IAsyncCollector<SignalRMessage> signalRMessages)
         {
             Console.WriteLine($"message: {user} created arena {group}");
-            var messageString = $"{user}::{group}";
+            var messageString = $"{user}::{group}::{challenge}";
             return signalRMessages.AddAsync(
                 new SignalRMessage
                 {
@@ -86,6 +86,19 @@ namespace CSharpDuelsHubFunction.Functions
                     UserId = userName,
                     GroupName = groupName,
                     Action = GroupAction.Remove
+                });
+        }
+        [FunctionName("leave")]
+        public static Task LeaveDuelMessage(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "leave/{group}/{user}")] object message, string user, string group, [SignalR(HubName = "duels")] IAsyncCollector<SignalRMessage> signalRMessages)
+        {
+            Console.WriteLine($"message: {user} created arena {group}");
+            var messageString = $"{user} Removed Arena: {group}";
+            return signalRMessages.AddAsync(
+                new SignalRMessage
+                {
+                    Target = "leaveArena",
+                    Arguments = new object[] { messageString }
                 });
         }
     }
