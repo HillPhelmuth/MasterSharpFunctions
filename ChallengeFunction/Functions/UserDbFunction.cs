@@ -13,6 +13,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using SharedModels;
+using ArenaDuel = ChallengeFunction.Models.ArenaDuel;
 
 namespace ChallengeFunction.Functions
 {
@@ -96,10 +98,18 @@ namespace ChallengeFunction.Functions
             var output = userWon ? $"{userId} Defeated {completedDuel?.RivalId} in challenge {completedDuel?.ChallengeName}!" : $"{completedDuel?.RivalId} Defeated {userId} in challenge {completedDuel?.ChallengeName}!";
             await context.UserDuels.AddAsync(completedDuel);
             await context.SaveChangesAsync();
+            var arenaResult = new ArenaResult
+            {
+                DuelName = completedDuel.DuelName,
+                DuelWinner = completedDuel.WonDuel ? userName : completedDuel.RivalId,
+                DuelLoser = completedDuel.WonDuel ? completedDuel.RivalId : userName
+            };
             var client = new HttpClient();
             var url = $"{FunctionBaseUrl}/alerts/DataBase Function";
+            var resultUrl = $"{FunctionBaseUrl}/duelResult/{arenaResult.DuelName}";
             var message = $"{output}";
             await client.PostAsJsonAsync(url, message);
+            await client.PostAsJsonAsync(resultUrl, arenaResult);
             return new OkResult();
 
         }
