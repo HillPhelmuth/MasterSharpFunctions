@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using ChallengeFunction.Data;
@@ -18,7 +19,7 @@ namespace ChallengeFunction.Functions
     public class UserDbFunction
     {
         private readonly ChallengeContext context;
-
+        private const string FunctionBaseUrl = "https://csharpduelshubfunction.azurewebsites.net/api";
         public UserDbFunction(ChallengeContext context)
         {
             this.context = context;
@@ -40,7 +41,9 @@ namespace ChallengeFunction.Functions
             {
                 var currentUser = users.FirstOrDefault(x => x.Name == userName);
                 var userSnippets = await context.UserSnippets.ToListAsync();
+                var userDuels = await context.UserDuels.ToListAsync();
                 currentUser.Snippets = userSnippets.Where(x => x.UserAppDataID == currentUser.ID).ToList();
+                currentUser.CompletedDuels = userDuels.Where(x => x.UserAppDataID == currentUser.ID).ToList();
                 JsonSerializerSettings settings = new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore };
                 var logString = JsonConvert.SerializeObject(currentUser, Formatting.Indented, settings);
                 log.LogInformation(logString);
@@ -73,7 +76,33 @@ namespace ChallengeFunction.Functions
             return new OkResult();
 
         }
+        [FunctionName("AddUserDuel")]
+        public async Task<IActionResult> AddDuel(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = "addDuel/{userName}")]
+            HttpRequest req, string userName,
+            ILogger log)
+        {
+            log.LogInformation($"C# HTTP trigger function processed a request.");
+            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+            var completedDuel = JsonConvert.DeserializeObject<ArenaDuel>(requestBody);
+            if (string.IsNullOrEmpty(userName))
+                return new BadRequestErrorMessageResult("Parameter UserName is required");
+            if (!await context.UserAppData.AnyAsync(x => x.Name == userName))
+                return new BadRequestErrorMessageResult("User does not exist in database");
+            var currentUser = await context.UserAppData.FirstOrDefaultAsync(x => x.Name == userName);
+            completedDuel.UserAppDataID = currentUser.ID;
+            var userWon = completedDuel.WonDuel;
+            var userId = userName;
+            var output = userWon ? $"{userId} Defeated {completedDuel?.RivalId} in challenge {completedDuel?.ChallengeName}!" : $"{completedDuel?.RivalId} Defeated {userId} in challenge {completedDuel?.ChallengeName}!";
+            await context.UserDuels.AddAsync(completedDuel);
+            await context.SaveChangesAsync();
+            var client = new HttpClient();
+            var url = $"{FunctionBaseUrl}/alerts/DataBase Function";
+            var message = $"{output}";
+            await client.PostAsJsonAsync(url, message);
+            return new OkResult();
 
+        }
         [FunctionName("UpdateUserChallenge")]
         public async Task<IActionResult> UpdateUserChallenge(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = "addSnippet/{userName}/{challengeId}")]

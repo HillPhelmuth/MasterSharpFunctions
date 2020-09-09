@@ -12,7 +12,7 @@ namespace ChallengeFunction.Models
         public string Name { get; set; }
         public string ChallengeSuccessData { get; set; }
         public virtual List<UserSnippet> Snippets { get; set; }
-       
+        public virtual List<ArenaDuel> CompletedDuels { get; set; }
         [NotMapped]
         public List<int> ChallengeSuccessIds
         {

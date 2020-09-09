@@ -11,6 +11,7 @@ namespace ChallengeFunction.Data
         public DbSet<Video> Videos { get; set; }
         public DbSet<UserAppData> UserAppData { get; set; }
         public DbSet<UserSnippet> UserSnippets { get; set; }
+        public DbSet<ArenaDuel> UserDuels { get; set; }
         public ChallengeContext(DbContextOptions<ChallengeContext> options)
             : base(options)
         {
