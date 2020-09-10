@@ -106,7 +106,7 @@ namespace ChallengeFunction.Functions
             };
             var client = new HttpClient();
             var url = $"{FunctionBaseUrl}/alerts/DataBase Function";
-            var resultUrl = $"{FunctionBaseUrl}/duelResult/{arenaResult.DuelName}";
+            var resultUrl = $"{FunctionBaseUrl}/duelResult/{arenaResult.DuelName}/{output}";
             var message = $"{output}";
             await client.PostAsJsonAsync(url, message);
             await client.PostAsJsonAsync(resultUrl, arenaResult);

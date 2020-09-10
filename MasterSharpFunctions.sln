@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CSharpDuels", "CSharpDuels\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CSharpRealTimeFunction", "CSharpRealTimeFunction\CSharpRealTimeFunction.csproj", "{1D8C134D-442F-42FC-99A7-A88C4CA4AD51}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSharpDuelsHubFunction", "CSharpDuelsHubFunction\CSharpDuelsHubFunction.csproj", "{7D8876A7-BFC8-449F-8C76-4EF7666952C4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CSharpDuelsHubFunction", "CSharpDuelsHubFunction\CSharpDuelsHubFunction.csproj", "{7D8876A7-BFC8-449F-8C76-4EF7666952C4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedModels", "SharedModels\SharedModels.csproj", "{00D28077-7672-49A8-92F3-6792CC9FFE7B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{7D8876A7-BFC8-449F-8C76-4EF7666952C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7D8876A7-BFC8-449F-8C76-4EF7666952C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7D8876A7-BFC8-449F-8C76-4EF7666952C4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{00D28077-7672-49A8-92F3-6792CC9FFE7B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00D28077-7672-49A8-92F3-6792CC9FFE7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00D28077-7672-49A8-92F3-6792CC9FFE7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00D28077-7672-49A8-92F3-6792CC9FFE7B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
