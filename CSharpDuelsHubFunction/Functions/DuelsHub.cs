@@ -56,7 +56,6 @@ namespace CSharpDuelsHubFunction.Functions
             [SignalR(HubName = "duels")] IAsyncCollector<SignalRMessage> signalRMessages)
         {
             Console.WriteLine($"{userName} joined group {groupName}");
-            var messageString = $"{groupName}::{userName}";
             var jsonObject = new JObject { { "group", groupName }, { "user", userName } };
             return signalRMessages.AddAsync(
                 new SignalRMessage
@@ -72,9 +71,8 @@ namespace CSharpDuelsHubFunction.Functions
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
             var arenaResult = JsonConvert.DeserializeObject<ArenaResult>(requestBody);
             Console.WriteLine($"Log message: {message}");
-            var messageString = $"{group}::{message}";
             var alertAllString = $"end::{arenaResult.DuelName}";
-            var messageJObject = new JObject { { "group", group }, { "message", message } };
+            var messageJObject = new JObject { { "group", group }, { "message", message }, {"end", true} };
             await signalRMessages.AddAsync(
                 new SignalRMessage
                 {
@@ -103,7 +101,6 @@ namespace CSharpDuelsHubFunction.Functions
             [SignalR(HubName = "duels")] IAsyncCollector<SignalRMessage> signalRMessages)
         {
             Console.WriteLine($"message: {JsonConvert.SerializeObject(message)}");
-            var messageString = $"{group}::{message}";
             var jsonObject = new JObject {{"group", group}, {"message", message as JToken}};
             return signalRMessages.AddAsync(
                 new SignalRMessage
@@ -118,8 +115,7 @@ namespace CSharpDuelsHubFunction.Functions
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "create/{group}/{user}/{challenge}")] object message, string user, string group, string challenge, [SignalR(HubName = "duels")] IAsyncCollector<SignalRMessage> signalRMessages)
         {
             Console.WriteLine($"message: {user} created arena {group}");
-            var messageString = $"{user}::{group}::{challenge}";
-            var jsonObject = new JObject {{"user", user}, {"group", group}, {"challenge", challenge}};
+           var jsonObject = new JObject {{"user", user}, {"group", group}, {"challenge", challenge}};
             return signalRMessages.AddAsync(
                 new SignalRMessage
                 {
@@ -150,6 +146,20 @@ namespace CSharpDuelsHubFunction.Functions
                 new SignalRMessage
                 {
                     Target = "leaveArena",
+                    Arguments = new object[] { messageString }
+                });
+        }
+        [FunctionName("AlertUpdate")]
+        public static Task AlertUpdate(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "alert")] object message,
+            [SignalR(HubName = "duels")] IAsyncCollector<SignalRMessage> signalRMessages)
+        {
+            
+            var messageString = $"arena: Alert";
+            return signalRMessages.AddAsync(
+                new SignalRMessage
+                {
+                    Target = "alertArena",
                     Arguments = new object[] { messageString }
                 });
         }

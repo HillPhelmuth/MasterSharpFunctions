@@ -64,7 +64,7 @@ namespace CSharpDuels.Functions
             return new OkResult();
         }
 
-        [FunctionName("GetDuels")]
+        [FunctionName("GetUserDuels")]
         public async Task<IActionResult> RunGet(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = "Get/{userId}")]
             object duelModel, string userId, ILogger log)

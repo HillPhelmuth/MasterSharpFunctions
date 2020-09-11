@@ -95,7 +95,7 @@ namespace ChallengeFunction.Functions
             completedDuel.UserAppDataID = currentUser.ID;
             var userWon = completedDuel.WonDuel;
             var userId = userName;
-            var output = userWon ? $"{userId} Defeated {completedDuel?.RivalId} in challenge {completedDuel?.ChallengeName}!" : $"{completedDuel?.RivalId} Defeated {userId} in challenge {completedDuel?.ChallengeName}!";
+            var output = userWon ? $"{userId} Defeated {completedDuel.RivalId} in challenge {completedDuel.ChallengeName}!" : $"{completedDuel?.RivalId} Defeated {userId} in challenge {completedDuel?.ChallengeName}!";
             await context.UserDuels.AddAsync(completedDuel);
             await context.SaveChangesAsync();
             var arenaResult = new ArenaResult

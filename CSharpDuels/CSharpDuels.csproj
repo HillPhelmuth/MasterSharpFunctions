@@ -5,6 +5,7 @@
     <UserSecretsId>b96108c7-2719-42f3-8c56-17ead5899aa6</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Functions\DuelHttpBound.cs" />
     <Compile Remove="Models\DuelModel.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -17,6 +18,9 @@
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="3.0.3" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Storage" Version="3.0.10" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SharedModels\SharedModels.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="host.json">

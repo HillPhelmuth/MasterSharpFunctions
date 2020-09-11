@@ -1,5 +1,7 @@
 ﻿using ChallengeFunction.Models;
 using Microsoft.EntityFrameworkCore;
+using SharedModels;
+using ArenaDuel = ChallengeFunction.Models.ArenaDuel;
 
 namespace ChallengeFunction.Data
 {
