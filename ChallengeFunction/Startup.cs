@@ -15,7 +15,10 @@ namespace ChallengeFunction
         {
             string connectionString = Environment.GetEnvironmentVariable("SqlConnectionString");
             builder.Services.AddDbContext<ChallengeContext>(
-                options => options.UseSqlServer(connectionString));
+                options => options.UseSqlServer(connectionString)
+                    .EnableDetailedErrors()
+                    .EnableSensitiveDataLogging());
+            builder.Services.AddHttpContextAccessor();
         }
     }
 }

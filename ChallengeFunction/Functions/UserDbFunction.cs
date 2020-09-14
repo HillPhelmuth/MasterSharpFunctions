@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using SharedModels;
 using ArenaDuel = ChallengeFunction.Models.ArenaDuel;
 
@@ -96,8 +97,7 @@ namespace ChallengeFunction.Functions
             var userWon = completedDuel.WonDuel;
             var userId = userName;
             var output = userWon ? $"{userId} Defeated {completedDuel.RivalId} in challenge {completedDuel.ChallengeName}!" : $"{completedDuel?.RivalId} Defeated {userId} in challenge {completedDuel?.ChallengeName}!";
-            await context.UserDuels.AddAsync(completedDuel);
-            await context.SaveChangesAsync();
+            
             var arenaResult = new ArenaResult
             {
                 DuelName = completedDuel.DuelName,
@@ -107,10 +107,12 @@ namespace ChallengeFunction.Functions
             var client = new HttpClient();
             var url = $"{FunctionBaseUrl}/alerts/DataBase Function";
             var resultUrl = $"{FunctionBaseUrl}/duelResult/{arenaResult.DuelName}/{output}";
-            log.LogInformation($"Result posted to Hub: \r\n url: {resultUrl} \r\n arenaResult: {JsonConvert.SerializeObject(arenaResult)}");
+            log.LogInformation($"Result posted to Hub: \r\n url: {resultUrl} \r\n arenaResult: {JObject.FromObject(arenaResult)}");
             var message = $"{output}";
             await client.PostAsJsonAsync(url, message);
             await client.PostAsJsonAsync(resultUrl, arenaResult);
+            await context.UserDuels.AddAsync(completedDuel);
+            await context.SaveChangesAsync();
             return new OkResult();
 
         }
