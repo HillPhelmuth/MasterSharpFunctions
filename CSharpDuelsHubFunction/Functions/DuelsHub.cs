@@ -71,7 +71,7 @@ namespace CSharpDuelsHubFunction.Functions
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
             var arenaResult = JsonConvert.DeserializeObject<ArenaResult>(requestBody);
             Console.WriteLine($"Log message: {message}");
-            var alertAllString = $"end::{arenaResult.DuelName}";
+            var alertAllString = $"{group} has ended";
             var messageJObject = new JObject { { "group", group }, { "message", message }, {"end", true}, {"duelWinner", arenaResult.DuelWinner}, {"duelLoser", arenaResult.DuelLoser} };
             await signalRMessages.AddAsync(
                 new SignalRMessage
