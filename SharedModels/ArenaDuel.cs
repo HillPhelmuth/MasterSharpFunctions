@@ -7,7 +7,7 @@ namespace SharedModels
     {
         public int ID { get; set; }
         public int UserAppDataID { get; set; }
-        [JsonProperty("duelId")]
+        [JsonProperty("duelName")]
         public string DuelName { get; set; }
 
         [JsonProperty("challengeName")]

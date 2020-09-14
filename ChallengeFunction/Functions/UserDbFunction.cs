@@ -81,8 +81,8 @@ namespace ChallengeFunction.Functions
         }
         [FunctionName("AddUserDuel")]
         public async Task<IActionResult> AddDuel(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = "addDuel/{userName}")]
-            HttpRequest req, string userName,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = "addDuel/{userName}/{arenaName}")]
+            HttpRequest req, string userName, string arenaName,
             ILogger log)
         {
             log.LogInformation($"C# HTTP trigger function processed a request.");
@@ -106,7 +106,7 @@ namespace ChallengeFunction.Functions
             };
             var client = new HttpClient();
             var url = $"{FunctionBaseUrl}/alerts/DataBase Function";
-            var resultUrl = $"{FunctionBaseUrl}/duelResult/{arenaResult.DuelName}/{output}";
+            var resultUrl = $"{FunctionBaseUrl}/duelResult/{arenaName}/{output}";
             log.LogInformation($"Result posted to Hub: \r\n url: {resultUrl} \r\n arenaResult: {JObject.FromObject(arenaResult)}");
             var message = $"{output}";
             await client.PostAsJsonAsync(url, message);
