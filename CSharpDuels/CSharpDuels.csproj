@@ -5,14 +5,22 @@
     <UserSecretsId>b96108c7-2719-42f3-8c56-17ead5899aa6</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="DataContext\**" />
+    <EmbeddedResource Remove="DataContext\**" />
+    <None Remove="DataContext\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Function.cs" />
     <Compile Remove="Functions\DuelHttpBound.cs" />
+    <Compile Remove="Models\DuelEntityConfig.cs" />
     <Compile Remove="Models\DuelModel.cs" />
+    <Compile Remove="Models\UserDuel.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.12.0" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.CosmosDB" Version="3.0.5" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" Version="3.1.7" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.3" />
+    <!--<PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" Version="3.1.7" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.3" />-->
     <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="3.1.0" />
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="3.0.3" />
@@ -30,5 +38,8 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <CopyToPublishDirectory>Never</CopyToPublishDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Models\" />
   </ItemGroup>
 </Project>

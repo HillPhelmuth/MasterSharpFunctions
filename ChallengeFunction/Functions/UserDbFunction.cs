@@ -98,9 +98,8 @@ namespace ChallengeFunction.Functions
             var userId = userName;
             var output = userWon ? $"{userId} Defeated {completedDuel.RivalId} in challenge {completedDuel.ChallengeName}!" : $"{completedDuel?.RivalId} Defeated {userId} in challenge {completedDuel?.ChallengeName}!";
             
-            var arenaResult = new ArenaResult
+            var arenaResult = new ArenaResultMessage
             {
-                DuelName = completedDuel.DuelName,
                 DuelWinner = completedDuel.WonDuel ? userName : completedDuel.RivalId,
                 DuelLoser = completedDuel.WonDuel ? completedDuel.RivalId : userName
             };

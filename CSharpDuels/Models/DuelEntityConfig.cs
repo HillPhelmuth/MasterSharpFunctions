@@ -13,10 +13,11 @@ namespace CSharpDuels.Models
         public void Configure(EntityTypeBuilder<Arena> builder)
         {
             builder.HasKey(x => x.Id);
-            builder.HasPartitionKey(x => x.Id);
+            
             builder.Ignore(x => x.CurrentChallenge);
-            builder.Property(x => x.Id).ToJsonProperty("id");
+            builder.HasPartitionKey(x => x.Id);
             builder.ToContainer("ActiveArenas");
+            
             
             //builder.OwnsMany(x => x.CompletedDuelsList, cd =>
             //{

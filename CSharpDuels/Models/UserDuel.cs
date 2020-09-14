@@ -18,7 +18,7 @@ namespace CSharpDuels.Models
 
         [JsonProperty("completedDuels")]
         public List<CompletedDuel> CompletedDuelsList { get; set; }
-        public static UserDuel FromJson(string json) => JsonConvert.DeserializeObject<UserDuel>(json, Converter.Settings);
+        //public static UserDuel FromJson(string json) => JsonConvert.DeserializeObject<UserDuel>(json, Converter.Settings);
 
     }
     public partial class Completed
@@ -51,33 +51,33 @@ namespace CSharpDuels.Models
             return $"{DuelId},{ChallengeName},{RivalId},{Solution},{WonDuel},{TimeCompleted}";
         }
     }
-    public partial class Completed
-    {
-        public static Completed FromJson(string json) => JsonConvert.DeserializeObject<Completed>(json, Converter.Settings);
-    }
+    //public partial class Completed
+    //{
+    //    public static Completed FromJson(string json) => JsonConvert.DeserializeObject<Completed>(json, Converter.Settings);
+    //}
 
-    public static class Serialize
-    {
-        public static string ToJson(this Completed self) => JsonConvert.SerializeObject(self, Converter.Settings);
-    }
+    //public static class Serialize
+    //{
+    //    public static string ToJson(this Completed self) => JsonConvert.SerializeObject(self, Converter.Settings);
+    //}
 
-    public static class SerializeWhole
-    {
-        public static string ToJson(this UserDuel self) => JsonConvert.SerializeObject(self, Converter.Settings);
-    }
+    //public static class SerializeWhole
+    //{
+    //    public static string ToJson(this UserDuel self) => JsonConvert.SerializeObject(self, Converter.Settings);
+    //}
     //var settings=new JsonSerializerSettings{DateFormatString ="yyyy-MM-ddTHH:mm"};
-    internal static class Converter
-    {
-        public static readonly JsonSerializerSettings Settings = new JsonSerializerSettings
-        {
-            DateFormatString = "yyyy-MM-ddTHH:mmK",
-            ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-            MetadataPropertyHandling = MetadataPropertyHandling.Ignore,
-            DateParseHandling = DateParseHandling.DateTime,
-            Converters =
-            {
-                new IsoDateTimeConverter { DateTimeStyles = DateTimeStyles.AssumeUniversal }
-            },
-        };
-    }
+    //internal static class Converter
+    //{
+    //    public static readonly JsonSerializerSettings Settings = new JsonSerializerSettings
+    //    {
+    //        DateFormatString = "yyyy-MM-ddTHH:mmK",
+    //        ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+    //        MetadataPropertyHandling = MetadataPropertyHandling.Ignore,
+    //        DateParseHandling = DateParseHandling.DateTime,
+    //        Converters =
+    //        {
+    //            new IsoDateTimeConverter { DateTimeStyles = DateTimeStyles.AssumeUniversal }
+    //        },
+    //    };
+    //}
 }

@@ -56,7 +56,7 @@ namespace CSharpDuelsHubFunction.Functions
             [SignalR(HubName = "duels")] IAsyncCollector<SignalRMessage> signalRMessages)
         {
             Console.WriteLine($"{userName} joined group {groupName}");
-            var jsonObject = new JObject { { "group", groupName }, { "user", userName } };
+            var jsonObject = new JObject { { "group", groupName }, { "user", userName }, {"message", $"{userName} has joined Arena: {groupName}"} };
             return signalRMessages.AddAsync(
                 new SignalRMessage
                 {
@@ -72,7 +72,7 @@ namespace CSharpDuelsHubFunction.Functions
             var arenaResult = JsonConvert.DeserializeObject<ArenaResult>(requestBody);
             Console.WriteLine($"Log message: {message}");
             var alertAllString = $"end::{arenaResult.DuelName}";
-            var messageJObject = new JObject { { "group", group }, { "message", message }, {"end", true} };
+            var messageJObject = new JObject { { "group", group }, { "message", message }, {"end", true}, {"duelWinner", arenaResult.DuelWinner}, {"duelLoser", arenaResult.DuelLoser} };
             await signalRMessages.AddAsync(
                 new SignalRMessage
                 {
