@@ -5,6 +5,9 @@
     <UserSecretsId>ea8cd17e-a4ad-435e-b466-da9cc366de57</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Function.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.SignalRService" Version="1.2.0" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Storage" Version="3.0.10" />
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="3.0.3" />
