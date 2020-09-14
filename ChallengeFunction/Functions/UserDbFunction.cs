@@ -107,6 +107,7 @@ namespace ChallengeFunction.Functions
             var client = new HttpClient();
             var url = $"{FunctionBaseUrl}/alerts/DataBase Function";
             var resultUrl = $"{FunctionBaseUrl}/duelResult/{arenaResult.DuelName}/{output}";
+            log.LogInformation($"Result posted to Hub: \r\n url: {resultUrl} \r\n arenaResult: {JsonConvert.SerializeObject(arenaResult)}");
             var message = $"{output}";
             await client.PostAsJsonAsync(url, message);
             await client.PostAsJsonAsync(resultUrl, arenaResult);
